@@ -17,13 +17,21 @@ const units = {
 }
 
 const Container = styled.div`
-    width: 100%;
+    width: 80%;
     height: 100%;
     display: flex;
     flex-direction: column;
 `
+const ParameterRow = styled.div`
+    display: flex;
+    justify-content: center;
 
-const ParameterContainer = ({
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+`
+
+const ParameterContainer = ({diffs,
     readings: {
         pressure,
         humidity,
@@ -36,40 +44,46 @@ const ParameterContainer = ({
     
     return (
         <Container>
-            <div style={{display: 'flex'}}>
+            <ParameterRow>
                 <ParameterBox 
                     description={descriptions[0]}
                     value={pressure}
                     unit={units.pressure}
+                    difference={diffs.pressure}
                     />
                 <ParameterBox 
                     description={descriptions[1]}
                     value={humidity}
                     unit={units.humidity}
+                    difference={diffs.humidity}
                     />
                 <ParameterBox 
                     description={descriptions[2]}
                     value={targetTemp}
                     unit={units.temperature}
+                    difference={diffs.targetTemp}
                     />
-            </div>
-            <div style={{display: 'flex'}}>
+            </ParameterRow>
+            <ParameterRow>
                 <ParameterBox 
                     description={descriptions[3]}
                     value={p}
                     unit={units.temperature}
+                    difference={diffs.ambientTemp.p}
                     />
                 <ParameterBox 
                     description={descriptions[4]}
                     value={rh}
                     unit={units.temperature}
+                    difference={diffs.ambientTemp.rh}
                     />
                 <ParameterBox 
                     description={descriptions[5]}
                     value={ir}
                     unit={units.temperature}
+                    difference={diffs.ambientTemp.ir}
                     />
-            </div>
+            </ParameterRow>
         </Container>
     )
 }
