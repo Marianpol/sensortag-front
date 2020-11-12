@@ -50,6 +50,7 @@ const Content = () => {
     })
 
     const [refreshRate, setRefreshRate] = useState(5);
+    const [showExtendedMeasurements, setShowExtendedMeasurements] = useState(false);
 
     function getReadingsComparison(currentReadings) {
         const comparedValues = {};
@@ -122,6 +123,9 @@ const Content = () => {
         runDataStream(secondsRefreshRate);
     }
 
+    const handleExtendedMeasurements = (event) => {
+        setShowExtendedMeasurements(event.target.checked);
+    }
 
     function runDataStream(interval){
         clearInterval(intervalId);
@@ -129,36 +133,53 @@ const Content = () => {
     }
 
     useEffect(() => {
-        runDataStream();
+        let defaultRefreshRate = refreshRate * 1000;
+        runDataStream(defaultRefreshRate);
     }, [])
 
     return (
         <main>
             <StyledSection>
                 <Header>Aktualne dane</Header>
-                <div style={{
-                    display:'flex',
-                    justifyContent:'center',
-                    }}
-                >
-                    <ParameterContainer 
-                        readings={dataPackage.readings}
-                        diffs={readingsComparison}
-                    />
-                </div>
-                <div style={{marginLeft: '1rem'}}>
+                <div style={{textAlign: 'center'}}>
                     <div>
                         Częstotliwość odświeżania (s)
                     </div>
                     <Select
                         value={refreshRate}
                         onChange={handleSelect}
+                        style={{
+                            minWidth: '5rem',
+                            margin: '0.5rem 0',
+                        }}
                     >
                         <MenuItem value={1.5}>1.5</MenuItem>
                         <MenuItem value={3}>3</MenuItem>
                         <MenuItem value={5}>5</MenuItem>
                         <MenuItem value={10}>10</MenuItem>
                     </Select>
+                <div>
+                    <label htmlFor="messureType">
+                        <input 
+                            type="checkbox" 
+                            id='messureType' 
+                            onChange={handleExtendedMeasurements} 
+                            defaultChecked={showExtendedMeasurements}
+                        />
+                        Pomiar temperatury dla każdego z czujników
+                    </label>
+                </div>
+                </div>
+                <div style={{
+                    display:'flex',
+                    justifyContent:'center',
+                    }}
+                >
+                    <ParameterContainer 
+                        showExtendedMeasurements={showExtendedMeasurements}
+                        readings={dataPackage.readings}
+                        diffs={readingsComparison}
+                    />
                 </div>
                 <p>{dataPackage.exception}</p>
             </StyledSection>

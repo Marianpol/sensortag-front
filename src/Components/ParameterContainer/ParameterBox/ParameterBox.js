@@ -12,7 +12,7 @@ const Container = styled.div`
 const Wrapper = styled.div`
     height: 30%;
     box-shadow: 0 1px 1px rgba(0,0,0,0.15), 0 2px 2px rgba(0,0,0,0.15), 0 4px 4px rgba(0,0,0,0.15), 0 8px 8px rgba(0,0,0,0.15);
-    padding: 2rem;
+    padding: 3rem 2rem;
     margin: 1rem;
     border-radius: 10px;
 

@@ -8,7 +8,8 @@ const descriptions = [
     'Temperatura obiektu',
     'Temperatura otoczenia zmierzona przez barometr',
     'Temperatura otoczenia zmierzona przez czujnik wilgotności',
-    'Temperatura otoczenia zmierzona przez czujnik podczerwieni'
+    'Temperatura otoczenia zmierzona przez czujnik podczerwieni',
+    'Temperatura',
 ]
 const units = {
     temperature: '°C',
@@ -31,7 +32,9 @@ const ParameterRow = styled.div`
     }
 `
 
-const ParameterContainer = ({diffs,
+const ParameterContainer = ({
+    showExtendedMeasurements,
+    diffs,
     readings: {
         pressure,
         humidity,
@@ -41,6 +44,20 @@ const ParameterContainer = ({diffs,
         }, 
     }
 }) => {
+
+    const ambientTemp = [p, ir, ir];
+
+    const getAverage = (temperatures) => {
+        const parsedTemperatures = temperatures.map((temp) => {
+            return parseFloat(temp);
+        })
+        const sumOfAllElements = parsedTemperatures.reduce((function(sum, value){
+            return sum + value;
+        }))
+        const average = (sumOfAllElements / parsedTemperatures.length).toFixed(2);
+        console.log(temperatures, sumOfAllElements, average);
+        return average;
+    }
     
     return (
         <Container>
@@ -63,27 +80,38 @@ const ParameterContainer = ({diffs,
                     unit={units.temperature}
                     difference={diffs.targetTemp}
                     />
+                {showExtendedMeasurements ? null: 
+                    <ParameterBox 
+                    description={descriptions[6]}
+                    value={getAverage(ambientTemp)}
+                    unit={units.temperature}
+                    difference={getAverage(Object.values(diffs.ambientTemp))}
+                    />
+                }
             </ParameterRow>
-            <ParameterRow>
-                <ParameterBox 
-                    description={descriptions[3]}
-                    value={p}
-                    unit={units.temperature}
-                    difference={diffs.ambientTemp.p}
-                    />
-                <ParameterBox 
-                    description={descriptions[4]}
-                    value={rh}
-                    unit={units.temperature}
-                    difference={diffs.ambientTemp.rh}
-                    />
-                <ParameterBox 
-                    description={descriptions[5]}
-                    value={ir}
-                    unit={units.temperature}
-                    difference={diffs.ambientTemp.ir}
-                    />
-            </ParameterRow>
+            {showExtendedMeasurements ? 
+                <ParameterRow>
+                    <ParameterBox 
+                        description={descriptions[3]}
+                        value={p}
+                        unit={units.temperature}
+                        difference={diffs.ambientTemp.p}
+                        />
+                    <ParameterBox 
+                        description={descriptions[4]}
+                        value={rh}
+                        unit={units.temperature}
+                        difference={diffs.ambientTemp.rh}
+                        />
+                    <ParameterBox 
+                        description={descriptions[5]}
+                        value={ir}
+                        unit={units.temperature}
+                        difference={diffs.ambientTemp.ir}
+                        />
+                </ParameterRow>   
+            :null
+            }
         </Container>
     )
 }
