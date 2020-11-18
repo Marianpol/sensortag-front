@@ -55,7 +55,6 @@ const ParameterContainer = ({
             return sum + value;
         }))
         const average = (sumOfAllElements / parsedTemperatures.length).toFixed(2);
-        console.log(temperatures, sumOfAllElements, average);
         return average;
     }
     

@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import ParameterContainer from './ParameterContainer/ParameterContainer';
+import { Prompt } from 'react-router-dom';
 
-const StyledSection = styled.section`
-`
 const Header = styled.h1`
     text-align: center;
     font-size: 2rem;
@@ -26,7 +25,7 @@ let previousState = {
 
 let intervalId = '';
 
-const Content = () => {
+const LiveFeed = () => {
 
     const [dataPackage, setDataPackage] = useState({
         time: toString(Date.now()),
@@ -72,12 +71,11 @@ const Content = () => {
                 comparedValues[key] = result.toFixed(2);
             }
         })
-        console.log(comparedValues)
         return comparedValues;
     }
 
     async function handleDataDownload(){
-        const result = await fetch('http://192.168.1.5:4444/', {
+        const result = await fetch('http://192.168.1.18:4444/api/live', {
             mode: 'cors',
             method: 'GET',
         })
@@ -138,53 +136,56 @@ const Content = () => {
     }, [])
 
     return (
-        <main>
-            <StyledSection>
-                <Header>Aktualne dane</Header>
-                <div style={{textAlign: 'center'}}>
-                    <div>
-                        Częstotliwość odświeżania (s)
-                    </div>
-                    <Select
-                        value={refreshRate}
-                        onChange={handleSelect}
-                        style={{
-                            minWidth: '5rem',
-                            margin: '0.5rem 0',
-                        }}
-                    >
-                        <MenuItem value={1.5}>1.5</MenuItem>
-                        <MenuItem value={3}>3</MenuItem>
-                        <MenuItem value={5}>5</MenuItem>
-                        <MenuItem value={10}>10</MenuItem>
-                    </Select>
+        <>
+            <Header>Aktualne dane</Header>
+            <div style={{textAlign: 'center'}}>
                 <div>
-                    <label htmlFor="messureType">
-                        <input 
-                            type="checkbox" 
-                            id='messureType' 
-                            onChange={handleExtendedMeasurements} 
-                            defaultChecked={showExtendedMeasurements}
-                        />
-                        Pomiar temperatury dla każdego z czujników
-                    </label>
+                    Częstotliwość odświeżania (s)
                 </div>
-                </div>
-                <div style={{
-                    display:'flex',
-                    justifyContent:'center',
+                <Select
+                    value={refreshRate}
+                    onChange={handleSelect}
+                    style={{
+                        minWidth: '5rem',
+                        margin: '0.5rem 0',
                     }}
                 >
-                    <ParameterContainer 
-                        showExtendedMeasurements={showExtendedMeasurements}
-                        readings={dataPackage.readings}
-                        diffs={readingsComparison}
+                    <MenuItem value={1.5}>1.5</MenuItem>
+                    <MenuItem value={3}>3</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={10}>10</MenuItem>
+                </Select>
+            <div>
+                <label htmlFor="messureType">
+                    <input 
+                        type="checkbox" 
+                        id='messureType' 
+                        onChange={handleExtendedMeasurements} 
+                        defaultChecked={showExtendedMeasurements}
                     />
-                </div>
-                <p>{dataPackage.exception}</p>
-            </StyledSection>
-        </main>
+                    Pomiar temperatury dla każdego z czujników
+                </label>
+            </div>
+            </div>
+            <div style={{
+                display:'flex',
+                justifyContent:'center',
+                }}
+            >
+                <ParameterContainer 
+                    showExtendedMeasurements={showExtendedMeasurements}
+                    readings={dataPackage.readings}
+                    diffs={readingsComparison}
+                />
+            </div>
+            <p>{dataPackage.exception}</p>
+            <Prompt
+                when={true}
+                message={() => {
+                    clearInterval(intervalId);
+                }}/>
+        </>
     )
 }
 
-export default Content;
+export default LiveFeed;
