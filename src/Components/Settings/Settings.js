@@ -1,7 +1,8 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import styled from 'styled-components';
 import DevicesBox from './DevicesBox/DevicesBox'
 import CustomizedSnackbar from '../Global/CustomizedSnackbar';
+import SERVER_URL from '../../Utilities/variables';
 
 const SettingsWrapper = styled.div`
     display: flex;
@@ -39,6 +40,8 @@ const StyledHeader = styled.h1`
 
 const Settings = () => {
 
+    console.log(SERVER_URL)
+
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [snackbarState , setSnackbarState] = useState({
         isOpen: false,
@@ -58,7 +61,6 @@ const Settings = () => {
     }
 
     const setInputValue = (value) => {
-        macAddressRef.current.value = '';
         macAddressRef.current.value = value;
     }
     
@@ -72,7 +74,7 @@ const Settings = () => {
     async function setDeviceAddress(address) {
         setIsButtonDisabled(true);
 
-        const result = await fetch('http://192.168.1.18:4444/api/setDeviceAddress', {
+        const result = await fetch(SERVER_URL + '/api/setDeviceAddress', {
             mode: 'cors',
             method: 'POST',
             headers: {
@@ -101,6 +103,29 @@ const Settings = () => {
             setIsButtonDisabled(false);
         })
     }
+
+    async function getDeviceAddress() {
+        const result = await fetch(SERVER_URL + 'api/getDeviceAddress', {
+            mode: 'cors',
+            method: 'GET',
+        })
+
+        const response = result.json();
+        response.then((device) => {
+            setInputValue(device.address);
+        })
+        .catch(() => {
+            setSnackbarState({
+                isOpen: true,
+                text: 'Nie można pobrać adresu urządzenia.',
+                type: 'error',
+            });
+        })
+    }
+
+    useEffect(() => {
+        getDeviceAddress();
+    }, [])
 
     return (
         <SettingsWrapper>

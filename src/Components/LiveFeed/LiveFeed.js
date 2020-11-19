@@ -4,6 +4,8 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import ParameterContainer from './ParameterContainer/ParameterContainer';
 import { Prompt } from 'react-router-dom';
+import CustomizedSnackbar from '../Global/CustomizedSnackbar';
+import SERVER_URL from '../../Utilities/variables';
 
 const Header = styled.h1`
     text-align: center;
@@ -48,6 +50,12 @@ const LiveFeed = () => {
         }
     })
 
+    const [snackbarState , setSnackbarState] = useState({
+        isOpen: false,
+        text: 'Brak komunikacji z urządzeniem',
+        type: 'error',
+      });
+
     const [refreshRate, setRefreshRate] = useState(5);
     const [showExtendedMeasurements, setShowExtendedMeasurements] = useState(false);
 
@@ -75,7 +83,7 @@ const LiveFeed = () => {
     }
 
     async function handleDataDownload(){
-        const result = await fetch('http://192.168.1.18:4444/api/live', {
+        const result = await fetch(SERVER_URL + 'api/live', {
             mode: 'cors',
             method: 'GET',
         })
@@ -85,6 +93,7 @@ const LiveFeed = () => {
             if (Object.keys(readings).length > 2){
                 const newDataPackage = {
                     time: readings['time'],
+                    exception: '',
                     readings:{
                         pressure: readings['pressure'],
                         humidity: readings['humidity'],
@@ -105,6 +114,10 @@ const LiveFeed = () => {
                     ...dataPackage,
                     time: readings['time'],
                     exception: readings['exception'],
+                })
+                setSnackbarState({
+                    ...snackbarState,
+                    isOpen: true,
                 })
             }
         })
@@ -128,6 +141,13 @@ const LiveFeed = () => {
     function runDataStream(interval){
         clearInterval(intervalId);
         intervalId = setInterval(handleDataDownload, interval);
+    }
+
+    const handleSnackbarClose = () => {
+        setSnackbarState({
+            ...snackbarState,
+            isOpen: false, 
+        });
     }
 
     useEffect(() => {
@@ -178,7 +198,10 @@ const LiveFeed = () => {
                     diffs={readingsComparison}
                 />
             </div>
-            <p>{dataPackage.exception}</p>
+            <CustomizedSnackbar
+                snackbarState={snackbarState}
+                handleSnackbarClose={handleSnackbarClose}
+            />
             <Prompt
                 when={true}
                 message={() => {

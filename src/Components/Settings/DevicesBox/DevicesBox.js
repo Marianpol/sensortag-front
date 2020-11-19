@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
-import Snackbar from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
 import styled from 'styled-components';
 import CustomizedSnackbar from '../../Global/CustomizedSnackbar';
+import SERVER_URL from '../../../Utilities/variables';
 
 export const StyledButton = styled.button`
     text-align: center;
@@ -59,10 +58,17 @@ const DevicesBox = ({setInputValue}) => {
         type: 'error',
       });
 
+    const handleSnackbarClose = () => {
+        setSnackbarState({
+            ...snackbarState,
+            isOpen: false, 
+        });
+    }
+
     async function getDevices() {
         setIsButtonDisabled(true);
 
-        const result = await fetch('http://192.168.1.18:4444/api/getDevices', {
+        const result = await fetch(SERVER_URL + 'api/getDevices', {
             mode: 'cors',
             method: 'GET',
         })
@@ -97,6 +103,7 @@ const DevicesBox = ({setInputValue}) => {
                             {devices.map(([address, name]) => {
                                 return (
                                     <StyledRow 
+                                        key={address}
                                         onClick={() => setInputValue(address)}
                                         style={{cursor: 'pointer'}}
                                     >
@@ -116,6 +123,7 @@ const DevicesBox = ({setInputValue}) => {
             </TableContainer>
             <CustomizedSnackbar
                 snackbarState={snackbarState}
+                handleSnackbarClose={handleSnackbarClose}
             />
         </div>
     )
