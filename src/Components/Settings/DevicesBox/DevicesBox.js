@@ -67,6 +67,7 @@ const DevicesBox = ({setInputValue}) => {
 
     async function getDevices() {
         setIsButtonDisabled(true);
+        setTimeout(() => setIsButtonDisabled(false), 5000);
 
         const result = await fetch(SERVER_URL + 'api/getDevices', {
             mode: 'cors',

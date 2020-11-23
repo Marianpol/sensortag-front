@@ -3,6 +3,7 @@ import useWidthClue from '../../../../Utilities/hooks/useWidthClue';
 import BurgerLayout from './BurgerLayout/BurgerLayout';
 
 const navLinks = [
+    ['/', 'STRONA GŁÓWNA'],
     ['/live', 'AKTULANE DANE'],
     ['/history', 'DANE HISTORYCZNE'],
     ['/settings', 'USTAWIENIA'],

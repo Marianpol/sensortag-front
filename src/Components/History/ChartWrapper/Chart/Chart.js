@@ -1,122 +1,58 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
+import Chart from 'chart.js';
+    // "Ciśnienie [hPa]": [1008.43, 1000.43, 1003.44, 1012.32, 1004.53, 1002.53, 1004.22, 1032.35, 1003.22, 1002.44],
 
-const Chart = () => {
+const dataExample = {
+    "Wilgotność [%]": [32.55, 22.66, 82.57, 20.95, 3.70, 23.23, 91.94, 32.49, 44.53, 40.21],
+    "Temperatura [°C]": [32.55, 23.55, 22.66, 12.33, 13.55, 22.87, 22.12, 14.45, 12.82, 17.54],
+    "Temperatura obiektu [°C]": [38.55, 31.43, 12.34, 43.21, 32.55, 12.43, 32.12, 43.32, 12.44, 51.43],
+}
 
-    // const drawCharts = useCallback(() => {
-    //     let datasets = dataWithoutTime.data.map((dataset, index) => {
-    //         const beginIndex = dataWithoutTime.names[index].indexOf('[');
-    //         const endIndex = dataWithoutTime.names[index].indexOf(']');
-            
-    //       return {
-    //         label: dataWithoutTime.names[index],
-    //         yAxisID: dataWithoutTime.names[index].substring(beginIndex + 1, endIndex),
-    //         borderColor: colors[index],
-    //         backgroundColor: colors[index],
-    //         hidden: !checkboxesState[index],
-    //         data: dataset,
-    //         fill: false,
-    //         pointRadius: 0,
-    //         borderWidth: 1,
-    //         lineTension: 0,
-    //       }
-    //     })
+const colors = ['#3e95cd', '#3cba9f', '#8e5ea2', '#e8c3b9'];
+let myChart;
+
+const HistoryChart = ({from, to}) => {
+
+    const canvasRef = useRef(null);
+    const ctx = null;
+
+    useEffect(() => {
+        if(myChart){
+            myChart.destroy();
+            myChart = 0;
+        }
+        const ctx = canvasRef.current.getContext('2d');
+        const datasets = Object.entries(dataExample).map(([key, value], index) => {
+            return {
+                data: value,
+                label: key,
+                borderColor: colors[index],
+                fill: false,
+                lineTension: 0,
+            }
+        })
+        console.log(datasets)
     
-    //     let yAxes = dataWithoutTime.names.map((name) => {
-    //       return {
-    //         id: name.substring(name.indexOf('[') + 1, name.indexOf(']')),
-    //         display: false,
-    //       }
-    //     })
-    
-    //     charts.push(new Chart(canvasRef.current.getContext("2d"), {
-    //       type: "LineWithLine",
-    //       data: {
-    //         labels: time,
-    //         datasets,
-    //         userEvents: userEventsArray,
-    //       },
-    //       options: {
-    //         animation: {
-    //           duration: 0,
-    //         },
-    //         responsiveAnimationDuration: 0,
-    //         legend:{
-    //           display: false,
-    //         },
-    //         tooltips: {
-    //           position: 'center',
-    //           mode: 'index',
-    //           intersect: false,
-    //           axis: 'x',
-    //           caretSize: 0,
-    //           callbacks: {
-    //             label: function (tooltipItem, data){
-    //               if (data.datasets[tooltipItem.datasetIndex].label.startsWith('ET') && Object.keys(statesDatasets).length){
-    //                 return `${data.datasets[tooltipItem.datasetIndex].label}: ${statesDatasets[data.datasets[tooltipItem.datasetIndex].label][tooltipItem.index]}`;
-    //               }
-    //               else{
-    //                 return `${data.datasets[tooltipItem.datasetIndex].label}: ${tooltipItem.yLabel}`;
-    //               }
-    //             },
-    //             title: function(item, data) {
-    //               const labelIndex = item[0].index;
-    //               if(data.userEvents[labelIndex]){
-    //                 return data.labels[labelIndex] + ' ' + data.userEvents[labelIndex] ;
-    //               }
-    //               return data.labels[labelIndex];
-    //             },
-    //           },
-    //         },
-    //         plugins: {
-    //           zoom: {
-    //             zoom:{
-    //               enabled: true,
-    //               mode: 'x',
-    //               speed: 0.20,
-    //               sensitivity: 0,
-    //             },
-    //             pan:{
-    //               enabled: true,
-    //               mode: 'x',
-    //               speed: 50000,
-    //             },
-    //           },
-    //         },
-    //         // scales:{
-    //         //   yAxes: [{
-    //         //     ticks:{
-    //         //       callback: function(value){
-    //         //         if (this.chart.config.data.datasets[0].label.startsWith('ET') && Object.keys(statesDatasets).length){
-    //         //           if(statesStringDict[this.chart.config.data.datasets[0].label][value]){
-    //         //             return statesStringDict[this.chart.config.data.datasets[0].label][value];
-    //         //           }
-    //         //         }
-    //         //         else {
-    //         //           return value;
-    //         //         }
-    //         //       }
-    //         //     },
-    //         //   }],
-    //         // },
-    //         scales: {
-    //           yAxes,
-    //           xAxes:[{
-    //             ticks: {
-    //               maxTicksLimit: 10,
-    //             },
-    //           }],
-    //         },
-    //         maintainAspectRatio: false,
-    //         // aspectRatio: 0.5,
-    //       },
-    //     }));
-    //   }, [time, dataWithoutTime, statesDatasets]);
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+            labels: ['15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','00:00'],
+              datasets: datasets,
+            },
+            options: {
+              title: {
+                display: true,
+                text: `Dane z okresu ${from} do ${to}`
+              }
+            }
+          });
+    }, [from, to])
 
     return ( 
         <>
-        
+            <canvas ref={canvasRef}></canvas>
         </>
     )
 }
 
-export default Chart;
+export default HistoryChart;

@@ -40,8 +40,6 @@ const StyledHeader = styled.h1`
 
 const Settings = () => {
 
-    console.log(SERVER_URL)
-
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [snackbarState , setSnackbarState] = useState({
         isOpen: false,
@@ -74,7 +72,7 @@ const Settings = () => {
     async function setDeviceAddress(address) {
         setIsButtonDisabled(true);
 
-        const result = await fetch(SERVER_URL + '/api/setDeviceAddress', {
+        const result = await fetch(SERVER_URL + 'api/setDeviceAddress', {
             mode: 'cors',
             method: 'POST',
             headers: {

@@ -4,6 +4,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
+Firstly, write your device (RaspberryPI) local IP address into the variables.js file, under the SERVER_IP variable and save the file.
+
 In the project directory, you can run:
 
 ### `npm start`

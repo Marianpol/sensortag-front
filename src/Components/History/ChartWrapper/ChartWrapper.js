@@ -1,6 +1,7 @@
-import React, {useState, useEffect, useRef} from 'react';
-import Chart from 'chart.js';
+import React, {useState} from 'react';
+import HistoryChart from './Chart/Chart';
 import styled from 'styled-components';
+import SERVER_URL from '../../../Utilities/variables';
 
 const Label = styled.label`
     padding: 0.5rem;
@@ -31,10 +32,8 @@ const ChartWrapper = () => {
     })
     const [readings, setReadings] = useState();
 
-    const canvasRef = useRef(null);
-
     async function getDataFromRange(){
-        const result = await fetch('http://192.168.1.5:4444/history', {
+        const result = await fetch(SERVER_URL + 'api/history', {
             mode: 'cors',
             method: 'POST',
             headers: {
@@ -47,7 +46,8 @@ const ChartWrapper = () => {
         
         const response = result.json();
         response.then((data) => {
-            setReadings();
+            console.log(data)
+            // setReadings();
         })
     }
 
@@ -72,10 +72,6 @@ const ChartWrapper = () => {
         return true;
     }
 
-    useEffect(() => {
-        const ctx = canvasRef.current.getContext('2d');
-    }, [])
-
     return (
         <div>
             <div style={{
@@ -98,6 +94,7 @@ const ChartWrapper = () => {
                     onChange={e => setDateToRange(e.target.value)}
                     max={getTodaysDate()}
                 />
+                <button onClick={() => getDataFromRange()}>Pokaż</button>
             </div>
             <ParametersList>
                 {Object.entries(parametersNames).map(([key, value]) => {
@@ -118,7 +115,10 @@ const ChartWrapper = () => {
                 )
                 })}
             </ParametersList>
-            <canvas ref={canvasRef}></canvas>
+            <HistoryChart
+                from={dateRange.from}
+                to={dateRange.to}
+            />
         </div>
     )
 }
