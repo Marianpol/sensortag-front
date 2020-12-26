@@ -5,7 +5,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ParameterContainer from './ParameterContainer/ParameterContainer';
 import { Prompt } from 'react-router-dom';
 import CustomizedSnackbar from '../Global/CustomizedSnackbar';
-import SERVER_URL from '../../Utilities/variables';
 
 const Header = styled.h1`
     text-align: center;
@@ -83,7 +82,7 @@ const LiveFeed = () => {
     }
 
     async function handleDataDownload(){
-        const result = await fetch(SERVER_URL + 'api/live', {
+        const result = await fetch('api/live', {
             mode: 'cors',
             method: 'GET',
         })

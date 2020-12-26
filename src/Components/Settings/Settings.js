@@ -2,7 +2,6 @@ import React, {useState, useRef, useEffect} from 'react';
 import styled from 'styled-components';
 import DevicesBox from './DevicesBox/DevicesBox'
 import CustomizedSnackbar from '../Global/CustomizedSnackbar';
-import SERVER_URL from '../../Utilities/variables';
 
 const SettingsWrapper = styled.div`
     display: flex;
@@ -72,7 +71,7 @@ const Settings = () => {
     async function setDeviceAddress(address) {
         setIsButtonDisabled(true);
 
-        const result = await fetch(SERVER_URL + 'api/setDeviceAddress', {
+        const result = await fetch('api/setDeviceAddress', {
             mode: 'cors',
             method: 'POST',
             headers: {
@@ -103,7 +102,7 @@ const Settings = () => {
     }
 
     async function getDeviceAddress() {
-        const result = await fetch(SERVER_URL + 'api/getDeviceAddress', {
+        const result = await fetch('api/getDeviceAddress', {
             mode: 'cors',
             method: 'GET',
         })

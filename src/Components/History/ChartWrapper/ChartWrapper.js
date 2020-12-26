@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import HistoryChart from './Chart/Chart';
 import styled from 'styled-components';
-import SERVER_URL from '../../../Utilities/variables';
 
 const Label = styled.label`
     padding: 0.5rem;
@@ -33,7 +32,7 @@ const ChartWrapper = () => {
     const [readings, setReadings] = useState();
 
     async function getDataFromRange(){
-        const result = await fetch(SERVER_URL + 'api/history', {
+        const result = await fetch('api/history', {
             mode: 'cors',
             method: 'POST',
             headers: {

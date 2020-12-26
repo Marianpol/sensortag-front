@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import CustomizedSnackbar from '../../Global/CustomizedSnackbar';
-import SERVER_URL from '../../../Utilities/variables';
 
 export const StyledButton = styled.button`
     text-align: center;
@@ -70,7 +69,7 @@ const DevicesBox = ({setInputValue}) => {
         setIsButtonDisabled(true);
         setTimeout(() => setIsButtonDisabled(false), 5000);
 
-        const result = await fetch(SERVER_URL + 'api/getDevices', {
+        const result = await fetch('api/getDevices', {
             mode: 'cors',
             method: 'GET',
         })
