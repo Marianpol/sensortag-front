@@ -42,7 +42,8 @@ const ParameterContainer = ({
         ambientTemp: {
             p, rh, ir,
         }, 
-    }
+    },
+    defaultState,
 }) => {
 
     const ambientTemp = [p, ir, ir];
@@ -63,26 +64,26 @@ const ParameterContainer = ({
             <ParameterRow>
                 <ParameterBox 
                     description={descriptions[0]}
-                    value={pressure}
+                    value={defaultState? '----': pressure}
                     unit={units.pressure}
                     difference={diffs.pressure}
                     />
                 <ParameterBox 
                     description={descriptions[1]}
-                    value={humidity}
+                    value={defaultState? '--.--': humidity}
                     unit={units.humidity}
                     difference={diffs.humidity}
                     />
                 <ParameterBox 
                     description={descriptions[2]}
-                    value={targetTemp}
+                    value={defaultState? '--.--': targetTemp}
                     unit={units.temperature}
                     difference={diffs.targetTemp}
                     />
                 {showExtendedMeasurements ? null: 
                     <ParameterBox 
                     description={descriptions[6]}
-                    value={getAverage(ambientTemp)}
+                    value={defaultState? '--.--': getAverage(ambientTemp)}
                     unit={units.temperature}
                     difference={getAverage(Object.values(diffs.ambientTemp))}
                     />
@@ -92,19 +93,19 @@ const ParameterContainer = ({
                 <ParameterRow>
                     <ParameterBox 
                         description={descriptions[3]}
-                        value={p}
+                        value={defaultState? '--.--': p}
                         unit={units.temperature}
                         difference={diffs.ambientTemp.p}
                         />
                     <ParameterBox 
                         description={descriptions[4]}
-                        value={rh}
+                        value={defaultState? '--.--': rh}
                         unit={units.temperature}
                         difference={diffs.ambientTemp.rh}
                         />
                     <ParameterBox 
                         description={descriptions[5]}
-                        value={ir}
+                        value={defaultState? '--.--': ir}
                         unit={units.temperature}
                         difference={diffs.ambientTemp.ir}
                         />

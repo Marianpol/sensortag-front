@@ -22,7 +22,7 @@ let previousState = {
             p: -273, rh: -273, ir: -273,
         }
     },
-    exception: '',
+    exception: 'Default state',
 };
 
 let intervalId = '';
@@ -39,7 +39,7 @@ const LiveFeed = () => {
                 p: -273, rh: -273, ir: -273,
             }
         },
-        exception: '',
+        exception: 'Default state',
     });
     const [readingsComparison, setReadingsComparison] = useState({
         pressure: 0, 
@@ -196,6 +196,7 @@ const LiveFeed = () => {
                     showExtendedMeasurements={showExtendedMeasurements}
                     readings={dataPackage.readings}
                     diffs={readingsComparison}
+                    defaultState={dataPackage.exception}
                 />
             </div>
             <CustomizedSnackbar

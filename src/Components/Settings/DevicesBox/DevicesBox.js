@@ -66,6 +66,7 @@ const DevicesBox = ({setInputValue}) => {
     }
 
     async function getDevices() {
+        setDevices([]);
         setIsButtonDisabled(true);
         setTimeout(() => setIsButtonDisabled(false), 5000);
 

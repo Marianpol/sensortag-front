@@ -31,7 +31,6 @@ const HistoryChart = ({from, to}) => {
                 lineTension: 0,
             }
         })
-        console.log(datasets)
     
         myChart = new Chart(ctx, {
             type: 'line',
