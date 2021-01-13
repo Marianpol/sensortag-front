@@ -1,32 +1,48 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Chart from 'chart.js';
-    // "Ciśnienie [hPa]": [1008.43, 1000.43, 1003.44, 1012.32, 1004.53, 1002.53, 1004.22, 1032.35, 1003.22, 1002.44],
+import styled from 'styled-components';
 
-const dataExample = {
-    "Wilgotność [%]": [32.55, 22.66, 82.57, 20.95, 3.70, 23.23, 91.94, 32.49, 44.53, 40.21],
-    "Temperatura [°C]": [32.55, 23.55, 22.66, 12.33, 13.55, 22.87, 22.12, 14.45, 12.82, 17.54],
-    "Temperatura obiektu [°C]": [38.55, 31.43, 12.34, 43.21, 32.55, 12.43, 32.12, 43.32, 12.44, 51.43],
+const CanvasContainer = styled.div`
+    margin: 10px 0;
+    width: 80vw;
+    height: 60vh;
+`
+
+const labelDict = {
+    'pressure': "Ciśnienie [hPa]",
+    'humidity': "Wilgotność [%]",
+    'tempAmbient': "Temperatura [°C]",
+    'tempTarget': "Temperatura obiektu [°C]",
 }
 
 const colors = ['#3e95cd', '#3cba9f', '#8e5ea2', '#e8c3b9'];
 let myChart;
 
-const HistoryChart = ({from, to}) => {
+const HistoryChart = ({from, to, readings}) => {
 
     const canvasRef = useRef(null);
     const ctx = null;
-
+    const [visibility, setVisibility] = useState({
+        'pres': true,
+        'humi': true,
+        'temp': true,
+    })
+    
     useEffect(() => {
         if(myChart){
             myChart.destroy();
             myChart = 0;
         }
         const ctx = canvasRef.current.getContext('2d');
-        const datasets = Object.entries(dataExample).map(([key, value], index) => {
+
+        const {labels, ...data} = readings;
+        const datasets = Object.entries(data).map(([key, value], index) => {
             return {
                 data: value,
-                label: key,
+                label: labelDict[key],
+                yAxisID: key.slice(0, 4),
                 borderColor: colors[index],
+                backgroundColor: colors[index],
                 fill: false,
                 lineTension: 0,
             }
@@ -35,22 +51,41 @@ const HistoryChart = ({from, to}) => {
         myChart = new Chart(ctx, {
             type: 'line',
             data: {
-            labels: ['15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','00:00'],
+            labels: labels,
               datasets: datasets,
             },
             options: {
-              title: {
-                display: true,
-                text: `Dane z okresu ${from} do ${to}`
-              }
+                aspectRatio: 2,
+                title: {
+                    display: true,
+                    text: `Dane z okresu ${from} do ${to}`
+                },
+                scales: {
+                    yAxes: [{
+                        id: 'pres',
+                        display: visibility.pres,
+                    }, {
+                        id: 'humi',
+                        display: visibility.humi,
+                    }, {
+                        id: 'temp',
+                        display: visibility.temp,
+                        position: 'right'
+                    }],
+                xAxes:[{
+                    ticks: {
+                        maxTicksLimit: 10,
+                  },
+                }],
+              },
             }
           });
-    }, [from, to])
+    }, [from, to, readings])
 
     return ( 
-        <>
+        <CanvasContainer>
             <canvas ref={canvasRef}></canvas>
-        </>
+        </CanvasContainer>
     )
 }
 

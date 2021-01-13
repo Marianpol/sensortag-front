@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Chart from 'chart.js';
 import ChartWrapper from './ChartWrapper/ChartWrapper';
 
 const Content = styled.div`

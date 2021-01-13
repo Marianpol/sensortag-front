@@ -29,7 +29,7 @@ const ChartWrapper = () => {
         from: getTodaysDate(),
         to: getTodaysDate(),
     })
-    const [readings, setReadings] = useState();
+    const [readings, setReadings] = useState([]);
 
     async function getDataFromRange(){
         const result = await fetch('api/history', {
@@ -45,14 +45,12 @@ const ChartWrapper = () => {
         
         const response = result.json();
         response.then((data) => {
-            console.log(data)
-            // setReadings();
+            setReadings(parseReadings(data))
         })
     }
 
     function getTodaysDate() {
-        return new Date().toISOString().slice(0,10);
-        
+        return new Date().toISOString().slice(0,10);  
     }
 
     function setDateFromRange (date){
@@ -69,6 +67,29 @@ const ChartWrapper = () => {
         }
         setDateRange({...dateRange, to: date});
         return true;
+    }
+    function parseReadings(data){
+        const readyReadings = {};
+        const pressure = [],
+              humidity = [],
+              targetTemp = [], 
+              ambientTemp = [], 
+              date = [];
+
+        data.forEach((item) => {
+            pressure.push(item[0])
+            humidity.push(item[1])
+            targetTemp.push(item[2])
+            ambientTemp.push(item[3])
+            date.push(item[4])
+        })
+        readyReadings['pressure'] = pressure;
+        readyReadings['humidity'] = humidity;
+        readyReadings['tempTarget'] = targetTemp;
+        readyReadings['tempAmbient'] = ambientTemp;
+        readyReadings['labels'] = date;
+
+        return readyReadings;
     }
 
     return (
@@ -95,28 +116,35 @@ const ChartWrapper = () => {
                 />
                 <button onClick={() => getDataFromRange()}>Pokaż</button>
             </div>
-            <ParametersList>
-                {Object.entries(parametersNames).map(([key, value]) => {
-                    return (
-                        <Label 
-                            htmlFor={key}
-                            key={key}
-                        >
-                        <input 
-                            type="checkbox" 
-                            id={key}
-                            defaultChecked={true}
-                            // onChange={handleExtendedMeasurements} 
-                            // defaultChecked={showExtendedMeasurements}
-                        />
-                            {value}
-                        </Label>
-                )
-                })}
-            </ParametersList>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '1rem'
+            }}>
+                <ParametersList>
+                    {Object.entries(parametersNames).map(([key, value]) => {
+                        return (
+                            <Label 
+                                htmlFor={key}
+                                key={key}
+                            >
+                            <input 
+                                type="checkbox" 
+                                id={key}
+                                defaultChecked={true}
+                                // onChange={handleExtendedMeasurements} 
+                                // defaultChecked={showExtendedMeasurements}
+                            />
+                                {value}
+                            </Label>
+                    )
+                    })}
+                </ParametersList>
+            </div>
             <HistoryChart
                 from={dateRange.from}
                 to={dateRange.to}
+                readings={readings}
             />
         </div>
     )
