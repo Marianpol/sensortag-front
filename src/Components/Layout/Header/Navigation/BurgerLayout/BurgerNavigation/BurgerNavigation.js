@@ -3,8 +3,6 @@ import {NavLink} from 'react-router-dom';
 import styled from 'styled-components';
 import CloseIcon from '@material-ui/icons/Close';
 
-// import randomString from '../../../../../../Utilities/functions/randomString';
-
 const Sidebar = styled.div`
     position: absolute;
     top: 0;

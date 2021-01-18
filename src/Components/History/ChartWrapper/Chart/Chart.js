@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const CanvasContainer = styled.div`
     margin: 10px 0;
     width: 80vw;
-    height: 60vh;
+    height: 70vh;
 `
 
 const labelDict = {
@@ -16,23 +16,35 @@ const labelDict = {
 }
 
 const colors = ['#3e95cd', '#3cba9f', '#8e5ea2', '#e8c3b9'];
-let myChart;
+let charts = [];
 
-const HistoryChart = ({from, to, readings}) => {
+const HistoryChart = ({from, to, readings, checkboxes}) => {
 
     const canvasRef = useRef(null);
-    const ctx = null;
     const [visibility, setVisibility] = useState({
         'pres': true,
         'humi': true,
         'temp': true,
     })
+
+    function changeDatasetVisibility(states){
+        console.log(charts[0])
+        states.forEach((state, index) => {
+            const meta = charts[0].chart.getDatasetMeta(index);
+            meta.hidden = !state;
+        })
+      }
+
+    const destroyChart = () => {
+        if(charts.length){
+          charts[0].destroy();
+          charts.pop();
+        }
+      }
     
     useEffect(() => {
-        if(myChart){
-            myChart.destroy();
-            myChart = 0;
-        }
+        destroyChart();
+
         const ctx = canvasRef.current.getContext('2d');
 
         const {labels, ...data} = readings;
@@ -45,17 +57,19 @@ const HistoryChart = ({from, to, readings}) => {
                 backgroundColor: colors[index],
                 fill: false,
                 lineTension: 0,
+                hidden: !checkboxes[index]
             }
         })
-    
-        myChart = new Chart(ctx, {
+
+        charts.push( new Chart(ctx, {
             type: 'line',
             data: {
             labels: labels,
               datasets: datasets,
             },
             options: {
-                aspectRatio: 2,
+                responsive: true,
+                maintainAspectRatio: false,
                 title: {
                     display: true,
                     text: `Dane z okresu ${from} do ${to}`
@@ -79,8 +93,20 @@ const HistoryChart = ({from, to, readings}) => {
                 }],
               },
             }
-          });
-    }, [from, to, readings])
+          })
+        );
+    }, [readings])
+
+    useEffect(() => {
+        charts[0].scales.humi.options.display = checkboxes[0];
+        charts[0].scales.pres.options.display = checkboxes[1];
+        charts[0].scales.temp.options.display = checkboxes[2] || checkboxes[3];
+        if(Object.keys(readings).length){
+            changeDatasetVisibility(checkboxes);       
+        }
+        charts[0].chart.update()
+
+    }, [checkboxes])
 
     return ( 
         <CanvasContainer>

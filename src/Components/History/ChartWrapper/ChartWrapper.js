@@ -29,7 +29,10 @@ const ChartWrapper = () => {
         from: getTodaysDate(),
         to: getTodaysDate(),
     })
-    const [readings, setReadings] = useState([]);
+    const [readings, setReadings] = useState({});
+    const [checkboxesState, setCheckboxesState] = useState(
+        Array.from(Object.keys(parametersNames), name => true)
+    );
 
     async function getDataFromRange(){
         const result = await fetch('api/history', {
@@ -68,6 +71,13 @@ const ChartWrapper = () => {
         setDateRange({...dateRange, to: date});
         return true;
     }
+
+    function changeCheckboxesState(id){
+        const tempCheckboxesState = Array.from(checkboxesState);
+        tempCheckboxesState[id] = !tempCheckboxesState[id];
+        setCheckboxesState(tempCheckboxesState);
+      }
+
     function parseReadings(data){
         const readyReadings = {};
         const pressure = [],
@@ -85,8 +95,8 @@ const ChartWrapper = () => {
         })
         readyReadings['pressure'] = pressure;
         readyReadings['humidity'] = humidity;
-        readyReadings['tempTarget'] = targetTemp;
         readyReadings['tempAmbient'] = ambientTemp;
+        readyReadings['tempTarget'] = targetTemp;
         readyReadings['labels'] = date;
 
         return readyReadings;
@@ -122,7 +132,7 @@ const ChartWrapper = () => {
                 marginBottom: '1rem'
             }}>
                 <ParametersList>
-                    {Object.entries(parametersNames).map(([key, value]) => {
+                    {Object.entries(parametersNames).map(([key, value], i) => {
                         return (
                             <Label 
                                 htmlFor={key}
@@ -131,9 +141,8 @@ const ChartWrapper = () => {
                             <input 
                                 type="checkbox" 
                                 id={key}
-                                defaultChecked={true}
-                                // onChange={handleExtendedMeasurements} 
-                                // defaultChecked={showExtendedMeasurements}
+                                checked={checkboxesState[i]}
+                                onChange={e => changeCheckboxesState(i)}
                             />
                                 {value}
                             </Label>
@@ -145,6 +154,7 @@ const ChartWrapper = () => {
                 from={dateRange.from}
                 to={dateRange.to}
                 readings={readings}
+                checkboxes={checkboxesState}
             />
         </div>
     )
